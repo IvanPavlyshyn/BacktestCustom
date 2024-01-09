@@ -3,7 +3,7 @@ Core framework data structures.
 Objects from this module can also be imported from the top-level
 module directly, e.g.
 
-    from backtesting import Backtest, Strategy
+    from backtestingcustom import Backtest, Strategy
 """
 import multiprocessing as mp
 import os
@@ -45,8 +45,8 @@ class Strategy(metaclass=ABCMeta):
     """
     A trading strategy base class. Extend this class and
     override methods
-    `backtesting.backtesting.Strategy.init` and
-    `backtesting.backtesting.Strategy.next` to define
+    `backtestingcustom.backtestingcustom.Strategy.init` and
+    `backtestingcustom.backtestingcustom.Strategy.next` to define
     your own strategy.
     """
     def __init__(self, broker, data, params):
@@ -82,18 +82,18 @@ class Strategy(metaclass=ABCMeta):
         """
         Declare indicator. An indicator is just an array of values,
         but one that is revealed gradually in
-        `backtesting.backtesting.Strategy.next` much like
-        `backtesting.backtesting.Strategy.data` is.
+        `backtestingcustom.backtestingcustom.Strategy.next` much like
+        `backtestingcustom.backtestingcustom.Strategy.data` is.
         Returns `np.ndarray` of indicator values.
 
         `func` is a function that returns the indicator array(s) of
-        same length as `backtesting.backtesting.Strategy.data`.
+        same length as `backtestingcustom.backtestingcustom.Strategy.data`.
 
         In the plot legend, the indicator is labeled with
         function name, unless `name` overrides it.
 
         If `plot` is `True`, the indicator is plotted on the resulting
-        `backtesting.backtesting.Backtest.plot`.
+        `backtestingcustom.backtestingcustom.Backtest.plot`.
 
         If `overlay` is `True`, the indicator is plotted overlaying the
         price candlestick chart (suitable e.g. for moving averages).
@@ -164,11 +164,11 @@ class Strategy(metaclass=ABCMeta):
         """
         Initialize the strategy.
         Override this method.
-        Declare indicators (with `backtesting.backtesting.Strategy.I`).
+        Declare indicators (with `backtestingcustom.backtestingcustom.Strategy.I`).
         Precompute what needs to be precomputed or can be precomputed
         in a vectorized fashion before the strategy starts.
 
-        If you extend composable strategies from `backtesting.lib`,
+        If you extend composable strategies from `backtestingcustom.lib`,
         make sure to call:
 
             super().init()
@@ -178,13 +178,13 @@ class Strategy(metaclass=ABCMeta):
     def next(self):
         """
         Main strategy runtime method, called as each new
-        `backtesting.backtesting.Strategy.data`
+        `backtestingcustom.backtestingcustom.Strategy.data`
         instance (row; full candlestick bar) becomes available.
         This is the main method where strategy decisions
-        upon data precomputed in `backtesting.backtesting.Strategy.init`
+        upon data precomputed in `backtestingcustom.backtestingcustom.Strategy.init`
         take place.
 
-        If you extend composable strategies from `backtesting.lib`,
+        If you extend composable strategies from `backtestingcustom.lib`,
         make sure to call:
 
             super().next()
@@ -233,22 +233,22 @@ class Strategy(metaclass=ABCMeta):
     def data(self) -> _Data:
         """
         Price data, roughly as passed into
-        `backtesting.backtesting.Backtest.__init__`,
+        `backtestingcustom.backtestingcustom.Backtest.__init__`,
         but with two significant exceptions:
 
         * `data` is _not_ a DataFrame, but a custom structure
           that serves customized numpy arrays for reasons of performance
           and convenience. Besides OHLCV columns, `.index` and length,
           it offers `.pip` property, the smallest price unit of change.
-        * Within `backtesting.backtesting.Strategy.init`, `data` arrays
+        * Within `backtestingcustom.backtestingcustom.Strategy.init`, `data` arrays
           are available in full length, as passed into
-          `backtesting.backtesting.Backtest.__init__`
+          `backtestingcustom.backtestingcustom.Backtest.__init__`
           (for precomputing indicators and such). However, within
-          `backtesting.backtesting.Strategy.next`, `data` arrays are
+          `backtestingcustom.backtestingcustom.Strategy.next`, `data` arrays are
           only as long as the current iteration, simulating gradual
           price point revelation. In each call of
-          `backtesting.backtesting.Strategy.next` (iteratively called by
-          `backtesting.backtesting.Backtest` internally),
+          `backtestingcustom.backtestingcustom.Strategy.next` (iteratively called by
+          `backtestingcustom.backtestingcustom.Backtest` internally),
           the last array value (e.g. `data.Close[-1]`)
           is always the _most recent_ value.
         * If you need data arrays (e.g. `data.Close`) to be indexed
@@ -260,7 +260,7 @@ class Strategy(metaclass=ABCMeta):
 
     @property
     def position(self) -> 'Position':
-        """Instance of `backtesting.backtesting.Position`."""
+        """Instance of `backtestingcustom.backtestingcustom.Position`."""
         return self._broker.position
 
     @property
@@ -303,8 +303,8 @@ class _Orders(tuple):
 class Position:
     """
     Currently held asset position, available as
-    `backtesting.backtesting.Strategy.position` within
-    `backtesting.backtesting.Strategy.next`.
+    `backtestingcustom.backtestingcustom.Strategy.position` within
+    `backtestingcustom.backtestingcustom.Strategy.next`.
     Can be used in boolean contexts, e.g.
 
         if self.position:
@@ -976,8 +976,8 @@ class Backtest:
     on particular data.
 
     Upon initialization, call method
-    `backtesting.backtesting.Backtest.run` to run a backtest
-    instance, or `backtesting.backtesting.Backtest.optimize` to
+    `backtestingcustom.backtestingcustom.Backtest.run` to run a backtest
+    instance, or `backtestingcustom.backtestingcustom.Backtest.optimize` to
     optimize it.
     """
     def __init__(self,
@@ -1008,7 +1008,7 @@ class Backtest:
         DataFrame index can be either a datetime index (timestamps)
         or a monotonic range index (i.e. a sequence of periods).
 
-        `strategy` is a `backtesting.backtesting.Strategy`
+        `strategy` is a `backtestingcustom.backtestingcustom.Strategy`
         _subclass_ (not an instance).
 
         `cash` is the initial cash to start with.
@@ -1218,7 +1218,7 @@ class Backtest:
         Returns result `pd.Series` of the best run.
 
         `maximize` is a string key from the
-        `backtesting.backtesting.Backtest.run`-returned results series,
+        `backtestingcustom.backtestingcustom.Backtest.run`-returned results series,
         or a function that accepts this series object and returns a number;
         the higher the better. By default, the method maximizes
         Van Tharp's [System Quality Number](https://google.com/search?q=System+Quality+Number).
@@ -1250,7 +1250,7 @@ class Backtest:
         series, an additional `pd.Series` is returned with a multiindex
         of all admissible parameter combinations, which can be further
         inspected or projected onto 2D to plot a heatmap
-        (see `backtesting.lib.plot_heatmaps()`).
+        (see `backtestingcustom.lib.plot_heatmaps()`).
 
         If `return_optimization` is True and `method = 'skopt'`,
         in addition to result series (and maybe heatmap), return raw
@@ -1522,8 +1522,8 @@ class Backtest:
 
         If `results` is provided, it should be a particular result
         `pd.Series` such as returned by
-        `backtesting.backtesting.Backtest.run` or
-        `backtesting.backtesting.Backtest.optimize`, otherwise the last
+        `backtestingcustom.backtestingcustom.Backtest.run` or
+        `backtestingcustom.backtestingcustom.Backtest.optimize`, otherwise the last
         run's results are used.
 
         `filename` is the path to save the interactive HTML plot to.
@@ -1585,7 +1585,7 @@ class Backtest:
         [Pandas offset string]: \
             https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects
 
-        [TRADES_AGG]: lib.html#backtesting.lib.TRADES_AGG
+        [TRADES_AGG]: lib.html#backtestingcustom.lib.TRADES_AGG
 
         If `show_legend` is `True`, the resulting plot graphs will contain
         labeled legends.
